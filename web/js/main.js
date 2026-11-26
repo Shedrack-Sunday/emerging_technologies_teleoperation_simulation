@@ -217,8 +217,10 @@ function fmt(v, d = 0) { return v == null ? '–' : v.toFixed(d); }
 function onStats(d) {
   const rows = [];
   let down = 0, up = 0;
+  const HIDDEN = new Set(['status']);        // still transmitted, just not listed
   for (const [topic, s] of Object.entries(d.down)) {
     down += s.rx_kbps;
+    if (HIDDEN.has(topic)) continue;
     rows.push(`<tr><td>↓ ${topic}</td><td>${fmt(s.rx_hz, 1)}</td><td>${fmt(s.rx_kbps, 1)}</td><td>${fmt(s.latency_ms)} ms</td><td>${fmt(s.loss_pct)} %</td></tr>`);
   }
   for (const [topic, s] of Object.entries(d.up)) {

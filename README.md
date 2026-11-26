@@ -34,13 +34,61 @@ errors from your code show up there.
 
 | Step | Run | You implement | Check |
 |---|---|---|---|
-| 0 Tour | `python3 run.py --step 0` | nothing - fly through Kibo to the airlock at the far end | |
+| 0 Tour | `python3 run.py --step 0` | nothing - fly through Kibo to the gap above the airlock at the far end | |
 | 1 Direct teleop | `python3 run.py --step 1` | `exercises/step1_command_mapping.py` | `python3 check.py 1` |
 | 2 The channel | `python3 run.py --step 2 --delay 1000` | `exercises/step2_channel.py` | `python3 check.py 2` |
 | 3 Feel the delay | `python3 run.py --step 3 --delay 0` (then 300, 1000, 3000) | experiment: do the inspection task at each delay | <http://localhost:8080/results> |
 
 Stuck on a step? `python3 run.py --step 3 --solution 2` uses the reference
 channel so you can continue.
+
+### Step 2 sub-task by sub-task
+
+After each sub-task, restart with the command from the table and check what
+you see in the operator station. (Step 1 not finished? Add `--solution 1` so
+you can fly.)
+
+| Sub-task | Run | What you should see |
+|---|---|---|
+| a) Delay | `python3 run.py --step 2 --delay 1000` | link monitor: ~1000 ms latency; *image age* ~1 s; a key press shows in the image after ~2 s |
+| b) Jitter | `python3 run.py --step 2 --delay 500 --jitter 300` | latency varies between 500 and 800 ms; the image arrives unevenly |
+| c) Loss | `python3 run.py --step 2 --loss 20` | ~20 % loss on all topics in the link monitor; flying still works |
+| d) Watchdog | `python3 run.py --step 2 --outage 5:3` | hold W: the link drops 5 s after your first key press. Before d), Int-Ball keeps flying; after d), it stops 0.5 s after the link drops (see below) |
+| e) Bonus: packets | `python3 run.py --step 2 --loss 5` | telemetry loses ~5 %, the camera almost everything; compare with `--loss 5 --camera 320x240 --quality 50` |
+
+Check all sub-tasks at once with `python3 check.py 2`.
+
+**What `--outage 5:3` means (sub-task d):** `START:DURATION` in seconds. 5 s
+after your first key press (not the program start, so you have time to get
+ready), the link goes down for 3 s - in both directions: no commands reach the
+robot, no images or telemetry reach you. Messages sent in that time are lost,
+not delayed. After 8 s the link works normally again.
+
+1. Hold W from the start. At 5 s the link drops; release W at about 6 s.
+2. Without the watchdog: your release ("stop") never arrives - Int-Ball keeps
+   executing its last "forward" until the link is back at 8 s. You only notice
+   afterwards, when the images catch up (or after a collision).
+3. With the watchdog: Int-Ball notices that no command has arrived for 0.5 s
+   and stops by itself, at about 5.5 s.
+
+During the outage, *image age* climbs and NO SIGNAL appears; *cmd age* freezes,
+because the telemetry carrying it is cut off too, and briefly shows a high value
+when the link is back. The option can be repeated, e.g.
+`--outage 5:3 --outage 15:1`.
+
+**What `--loss 5` means (sub-task e):** a 5 % loss chance - but *per what*
+depends on your code. With c) alone, each **message** is lost with 5 %, small
+or large. With e), each **1200-byte packet** is lost with 5 %, and a message
+only arrives if all its packets do (probability 0.95ⁿ for n packets):
+
+| Message | Packets | Arrives |
+|---|---|---|
+| telemetry, commands (~150 B) | 1 | 95 % |
+| camera 320×240, quality 50 (~10 kB) | ~9 | ~63 % |
+| camera 800×600, quality 75 (~82 kB, default) | ~69 | ~3 % |
+
+The same link that barely touches the telemetry almost kills the camera -
+smaller images survive much better.
 
 ## The operator station
 
@@ -75,9 +123,9 @@ itself. `python3 run.py --help` lists all options.
 ## The inspection task (step 3)
 
 Int-Ball's job on the ISS is to film for the ground team. Your task: fly from
-the hatch to the **JEM airlock** at the far end of Kibo and inspect it - stop
-0.5-1 m in front of it, facing it, roughly centred in the module, and hold
-still for 2 s. The clock starts with your first key press; the terminal tells
+the hatch to the far end of Kibo and into the narrow **gap above the JEM
+airlock**, between the airlock and the ceiling. Face the end wall and hold still
+there for 2 s. The clock starts with your first key press; the terminal tells
 you when you are in position and prints the result (time, collisions, path
 length, idle time, number of waits), which is also saved to `results/runs.csv`.
 
