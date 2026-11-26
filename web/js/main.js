@@ -237,7 +237,7 @@ function escapeHtml(s) { return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp
 // ------------------------------------------------------------------ controls
 const KEYMAP = {
   KeyW: 'w', KeyA: 'a', KeyS: 's', KeyD: 'd', KeyR: 'r', KeyF: 'f', KeyQ: 'q', KeyE: 'e',
-  ArrowUp: 'arrowup', ArrowDown: 'arrowdown', ShiftLeft: 'shift', ShiftRight: 'shift',
+  ArrowUp: 'arrowup', ArrowDown: 'arrowdown',
 };
 function sendKeys() { send({ type: 'keys', keys: [...S.keys] }); }
 window.addEventListener('keydown', (e) => {

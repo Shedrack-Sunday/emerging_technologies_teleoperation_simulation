@@ -14,28 +14,24 @@
   svg text { fill: var(--muted); font: 11px system-ui, sans-serif; }
   .axis line, .axis path { stroke: var(--line); }
   table { margin-top: 12px; }
-  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
 </style>
 </head>
 <body>
 <h1>Feel the delay — results</h1>
-<p class="lead">Every finished course run on this computer (results/runs.csv). Dots = runs, line = mean per delay.</p>
+<p class="lead">Every finished run on this computer (results/runs.csv). Dots = runs, line = mean per delay.</p>
 <div class="charts">
   <div class="panel"><div class="panel-title">Task time [s] vs. one-way delay</div><svg id="c-time"></svg></div>
   <div class="panel"><div class="panel-title">Idle fraction (no key pressed) vs. delay</div><svg id="c-idle"></svg></div>
   <div class="panel"><div class="panel-title">Number of waits (&gt; 0.5 s pauses) vs. delay</div><svg id="c-waits"></svg></div>
   <div class="panel"><div class="panel-title">Collisions vs. delay</div><svg id="c-coll"></svg></div>
 </div>
-<div class="legend" id="legend"></div>
 <div class="panel" style="margin-top:12px"><table id="tbl"></table></div>
 
 <script>
-const PAL = ['#4cc2ff', '#3fcf8e', '#f5a524', '#ff5d5d', '#b48cff', '#ff8fd0', '#9ad94c', '#e3d26f'];
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent?.appendChild(e); return e; };
 
-function chart(svg, rows, key, teams) {
+function chart(svg, rows, key) {
   svg.innerHTML = '';
   const W = svg.clientWidth || 500, H = 300, m = { l: 44, r: 12, t: 10, b: 30 };
   const delays = [...new Set(rows.map((r) => +r.delay_ms))].sort((a, b) => a - b);
@@ -53,20 +49,18 @@ function chart(svg, rows, key, teams) {
   el('polyline', { points: delays.map((d, i) => `${x(d)},${y(means[i])}`).join(' '), fill: 'none', stroke: 'var(--text)', 'stroke-width': 2, opacity: 0.7 }, svg);
   rows.forEach((r, i) => {
     const jitter = ((i * 37) % 11 - 5) * 3;
-    const c = el('circle', { cx: x(+r.delay_ms) + jitter, cy: y(+r[key]), r: 5, fill: PAL[teams.indexOf(r.team) % PAL.length], opacity: 0.85 }, svg);
-    el('title', {}, c).textContent = `${r.team}: ${r[key]}`;
+    const c = el('circle', { cx: x(+r.delay_ms) + jitter, cy: y(+r[key]), r: 5, fill: '#4cc2ff', opacity: 0.85 }, svg);
+    el('title', {}, c).textContent = `${r.finished_at}: ${r[key]}`;
   });
 }
 
 async function load() {
   const rows = await (await fetch('/api/results')).json();
-  const teams = [...new Set(rows.map((r) => r.team))];
-  chart(document.getElementById('c-time'), rows, 'task_time_s', teams);
-  chart(document.getElementById('c-idle'), rows, 'idle_frac', teams);
-  chart(document.getElementById('c-waits'), rows, 'waits', teams);
-  chart(document.getElementById('c-coll'), rows, 'collisions', teams);
-  document.getElementById('legend').innerHTML = teams.map((t, i) => `<span><i style="background:${PAL[i % PAL.length]}"></i>${t}</span>`).join('');
-  const cols = ['finished_at', 'team', 'delay_ms', 'jitter_ms', 'loss', 'task_time_s', 'collisions', 'idle_frac', 'waits', 'path_m'];
+  chart(document.getElementById('c-time'), rows, 'task_time_s');
+  chart(document.getElementById('c-idle'), rows, 'idle_frac');
+  chart(document.getElementById('c-waits'), rows, 'waits');
+  chart(document.getElementById('c-coll'), rows, 'collisions');
+  const cols = ['finished_at', 'delay_ms', 'jitter_ms', 'loss', 'task_time_s', 'collisions', 'idle_frac', 'waits', 'path_m'];
   document.getElementById('tbl').innerHTML = `<thead><tr>${cols.map((c) => `<th>${c}</th>`).join('')}</tr></thead>` +
     `<tbody>${rows.slice().reverse().map((r) => `<tr>${cols.map((c) => `<td>${r[c]}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }

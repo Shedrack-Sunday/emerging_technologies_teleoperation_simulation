@@ -5,29 +5,41 @@ from teleop.commands import VelocityCommand
 
 MAX_SPEED = 0.25    # m/s
 MAX_RATE = 0.5      # rad/s
-FINE_SCALE = 0.3
 
 
-def keys_to_command(keys: set[str]) -> VelocityCommand:
-    def axis(pos: str, neg: str) -> float:
-        return float(pos in keys) - float(neg in keys)
+def keys_to_command(keys):
+    vx, vy, vz = 0.0, 0.0, 0.0
+    wy, wz = 0.0, 0.0
 
-    cmd = VelocityCommand(
-        vx=MAX_SPEED * axis("w", "s"),
-        vy=MAX_SPEED * axis("a", "d"),
-        vz=MAX_SPEED * axis("r", "f"),
-        wz=MAX_RATE * axis("q", "e"),
-        wy=MAX_RATE * axis("arrowdown", "arrowup"),   # +wy = nose down
-    )
+    # a) translation
+    if "w" in keys:
+        vx = vx + MAX_SPEED
+    if "s" in keys:
+        vx = vx - MAX_SPEED
+    if "a" in keys:
+        vy = vy + MAX_SPEED
+    if "d" in keys:
+        vy = vy - MAX_SPEED
+    if "r" in keys:
+        vz = vz + MAX_SPEED
+    if "f" in keys:
+        vz = vz - MAX_SPEED
 
-    scale = FINE_SCALE if "shift" in keys else 1.0
-    speed = math.sqrt(cmd.vx ** 2 + cmd.vy ** 2 + cmd.vz ** 2)
+    # b) rotation
+    if "q" in keys:
+        wz = wz + MAX_RATE
+    if "e" in keys:
+        wz = wz - MAX_RATE
+    if "arrowup" in keys:
+        wy = wy - MAX_RATE          # positive wy = nose down
+    if "arrowdown" in keys:
+        wy = wy + MAX_RATE
+
+    # c) limit the speed
+    speed = math.sqrt(vx**2 + vy**2 + vz**2)
     if speed > MAX_SPEED:
-        scale *= MAX_SPEED / speed
+        vx = vx * MAX_SPEED / speed
+        vy = vy * MAX_SPEED / speed
+        vz = vz * MAX_SPEED / speed
 
-    cmd.vx *= scale
-    cmd.vy *= scale
-    cmd.vz *= scale
-    cmd.wy *= FINE_SCALE if "shift" in keys else 1.0
-    cmd.wz *= FINE_SCALE if "shift" in keys else 1.0
-    return cmd
+    return VelocityCommand(vx=vx, vy=vy, vz=vz, wy=wy, wz=wz)

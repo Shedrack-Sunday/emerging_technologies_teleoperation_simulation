@@ -1,50 +1,47 @@
-"""STEP 1 - Direct teleoperation: map keyboard input to a velocity command.
+"""STEP 1 - Direct teleoperation: from keys to a velocity command.
 
-This function runs on the OPERATOR side, 20 times per second. Its result is sent
-over the uplink to Int-Ball, whose onboard controller then tries to reach the
-commanded velocity (rate control: holding a key = moving).
+The lab calls keys_to_command() 20 times per second with the set of keys you
+are holding, e.g. {"w", "q"}. The command you return is sent to Int-Ball, and
+its onboard controller makes it move at that velocity. Holding a key = moving.
 
-Keys arrive as a set of lowercase names of all keys that are currently pressed:
+    "w" / "s"                forward / backward
+    "a" / "d"                left / right
+    "r" / "f"                up / down
+    "q" / "e"                turn left / turn right
+    "arrowup" / "arrowdown"  look up / look down
 
-    "w" / "s"              forward / backward      (body x)
-    "a" / "d"              left / right            (body y)
-    "r" / "f"              up / down               (body z)
-    "q" / "e"              yaw left / yaw right    (about body z)
-    "arrowup" / "arrowdown"  pitch: look up / look down (about body y)
-    "shift"                fine mode (slow, precise motion)
-
-Body frame of Int-Ball: x = camera direction, y = left, z = up.
-Right-hand rule: positive wz turns LEFT, positive wy pitches the nose DOWN.
+Directions as seen by Int-Ball (x = where the camera looks):
+    vx > 0  forward          wz > 0  turn left
+    vy > 0  left             wy > 0  look DOWN  (careful!)
+    vz > 0  up
 
 TODO (step 1):
-  a) Translation: w/s, a/d, r/f -> vx, vy, vz with MAX_SPEED
-  b) Rotation: q/e -> wz, arrowup/arrowdown -> wy with MAX_RATE
-     (careful with the sign of the pitch!)
-  c) Fine mode: while "shift" is held, scale everything by FINE_SCALE
-  d) Pressing w and a together should not make Int-Ball faster than MAX_SPEED.
-     Normalise the linear velocity if needed.
+  a) Translation: w/s, a/d, r/f  ->  vx, vy, vz   (use MAX_SPEED)
+  b) Rotation:    q/e -> wz,  arrowup/arrowdown -> wy   (use MAX_RATE)
+  c) Holding w and a together must not be faster than MAX_SPEED.
 
 Run with:   python3 run.py --step 1
 Check with: python3 check.py 1
 """
+import math
+
 from teleop.commands import VelocityCommand
 
 MAX_SPEED = 0.25    # m/s
 MAX_RATE = 0.5      # rad/s
-FINE_SCALE = 0.3
 
 
-def keys_to_command(keys: set[str]) -> VelocityCommand:
-    cmd = VelocityCommand()
+def keys_to_command(keys):
+    vx, vy, vz = 0.0, 0.0, 0.0      # m/s
+    wy, wz = 0.0, 0.0               # rad/s
 
-    # TODO a) translation, e.g.
-    # if "w" in keys:
-    #     cmd.vx += MAX_SPEED
+    # TODO a) translation - the first one is done for you:
+    if "w" in keys:
+        vx = vx + MAX_SPEED
 
     # TODO b) rotation
 
-    # TODO c) fine mode
+    # TODO c) speed = math.sqrt(vx**2 + vy**2 + vz**2)
+    #         if it is larger than MAX_SPEED, scale vx, vy, vz down
 
-    # TODO d) limit the norm of (vx, vy, vz) to MAX_SPEED (hint: math.sqrt or numpy)
-
-    return cmd
+    return VelocityCommand(vx=vx, vy=vy, vz=vz, wy=wy, wz=wz)

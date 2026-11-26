@@ -187,10 +187,13 @@ def serve(lab: Lab, host: str, port: int):
     url = f"http://localhost:{port}"
     lab.results_url = f"{url}/results"
     impl, c, cam = lab.impl, lab.config, lab.robot.camera
-    src = {"exercises": "your code", "solutions": "reference solution", "builtin": "built-in"}
+    def src_name(s):
+        if s.startswith("solutions "):
+            return f"reference solution up to task {s.split(' ')[1]}"
+        return {"exercises": "your code", "solutions": "reference solution", "builtin": "built-in"}[s]
     print(f"\n  Int-Ball teleop lab - step {impl.step}")
-    print(f"  keyboard mapping (1): {src[impl.sources[1]]}")
-    print(f"  channel + watchdog (2): {src[impl.sources[2]]}"
+    print(f"  keyboard mapping (1): {src_name(impl.sources[1])}")
+    print(f"  channel + watchdog (2): {src_name(impl.sources[2])}"
           + ("  -> ideal link, no delay or loss" if impl.sources[2] == "builtin" else ""))
     if impl.sources[2] == "builtin" and (c.delay_ms or c.jitter_ms or c.loss or lab.outages):
         print("  NOTE: --delay/--jitter/--loss/--outage have no effect before step 2 (or --solution 2)")
@@ -201,7 +204,7 @@ def serve(lab: Lab, host: str, port: int):
           + (", gray" if cam.grayscale else ""))
     if lab.course:
         t = lab.world.target
-        print(f"  timed task{' for ' + lab.team if lab.team else ''}: fly to the {t.name} at the far end of Kibo,")
+        print(f"  timed task: fly to the {t.name} at the far end of Kibo,")
         print(f"  stop {t.lo[0]:g}-{t.hi[0]:g} m along the module, facing it, and hold still for {t.hold_s:g} s.")
         print("  The clock starts with your first key press.")
     print(f"\n  operator station: {url}   (Ctrl+C to stop)\n")

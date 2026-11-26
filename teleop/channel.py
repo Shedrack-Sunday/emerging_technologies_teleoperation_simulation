@@ -46,6 +46,19 @@ class ChannelBase:
     def __init__(self, config: ChannelConfig | None = None):
         self.config = config or ChannelConfig()
 
+    # Settings in the units the exercise uses
+    @property
+    def delay_s(self) -> float:
+        return self.config.delay_ms / 1000.0
+
+    @property
+    def jitter_s(self) -> float:
+        return self.config.jitter_ms / 1000.0
+
+    @property
+    def loss(self) -> float:
+        return self.config.loss
+
     def configure(self, config: ChannelConfig):
         """Called when delay/jitter/loss change at runtime."""
         self.config = config

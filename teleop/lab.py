@@ -16,7 +16,6 @@ import csv
 import copy
 import os
 import datetime as dt_mod
-import re
 import time
 import traceback
 from pathlib import Path
@@ -31,7 +30,7 @@ from teleop.robot import RobotSide
 from teleop.sim.world import make_kibo
 from teleop.student import Implementation
 
-RESULT_FIELDS = ["finished_at", "team", "step", "delay_ms", "jitter_ms", "loss", "task_time_s",
+RESULT_FIELDS = ["finished_at", "step", "delay_ms", "jitter_ms", "loss", "task_time_s",
                  "collisions", "path_m", "idle_frac", "waits", "task"]
 
 
@@ -64,7 +63,7 @@ class Lab:
     line (run.py); the browser is only the operator station."""
 
     def __init__(self, impl: Implementation, results_dir: Path | None = None, seed: int = 0,
-                 course: bool = False, team: str = "", outages: list[tuple[float, float]] | None = None,
+                 course: bool = False, outages: list[tuple[float, float]] | None = None,
                  show_truth: bool = False, log=None):
         self.impl = impl
         self.results_dir = results_dir
@@ -73,7 +72,6 @@ class Lab:
         self.op = OperatorSide(impl.keys_to_command)
         self.config = ChannelConfig()
         self.now = 0.0
-        self.team = re.sub(r"[^\w\- ]", "", team)[:30]
         self.course = course
         self.show_truth = show_truth
         self.log = log or (lambda *a: None)       # terminal output (run.py passes print)
@@ -299,7 +297,7 @@ class Lab:
         T = r.t_end - r.t0
         r.result = {
             "finished_at": dt_mod.datetime.now().isoformat(timespec="seconds"),
-            "team": self.team or "anonymous", "step": self.impl.step,
+            "step": self.impl.step,
             "delay_ms": cfg.delay_ms, "jitter_ms": cfg.jitter_ms, "loss": cfg.loss,
             "task_time_s": round(T, 2), "collisions": self.robot.collisions,
             "path_m": round(self.robot.path_length, 2),
@@ -324,7 +322,7 @@ class Lab:
             w.writerow(r.result)
         tdir = self.results_dir / "trajectories"
         tdir.mkdir(exist_ok=True)
-        name = f"{r.result['finished_at'].replace(':', '')}_{r.result['team'].replace(' ', '_')}_{int(cfg.delay_ms)}ms.csv"
+        name = f"{r.result['finished_at'].replace(':', '')}_{int(cfg.delay_ms)}ms.csv"
         with (tdir / name).open("w", newline="") as fh:
             w = csv.writer(fh)
             w.writerow(["t", "x", "y", "z", "commanding"])

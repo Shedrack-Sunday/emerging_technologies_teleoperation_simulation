@@ -13,8 +13,9 @@ setting, stop with Ctrl+C and start again - the open browser tab reconnects.
 Examples:
     python3 run.py --step 2 --delay 1000 --jitter 200 --loss 5
     python3 run.py --step 2 --outage 5:3            link down 5..8 s after the first key press
-    python3 run.py --step 3 --delay 3000 --team falcons
+    python3 run.py --step 3 --delay 3000
     python3 run.py --step 3 --solution 2 --delay 300
+    python3 run.py --step 2 --solution 1,2b       reference up to task 2b (delay + jitter)
 """
 import argparse
 import sys
@@ -57,7 +58,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--step", type=int, default=0, help="exercise step 0..3 (default 0)")
     ap.add_argument("--solution", default="", metavar="N[,N]",
-                    help="take these exercises from solutions/ instead of exercises/, e.g. 1,2")
+                    help="use the reference solution instead of your code: 1, 2 or both (1,2); "
+                         "a letter stops after that sub-task, e.g. 2b = delay + jitter")
     ap.add_argument("--all-solutions", action="store_true", help=argparse.SUPPRESS)
 
     g = ap.add_argument_group("link (needs your channel from step 2 on)")
@@ -77,7 +79,6 @@ def main():
     g.add_argument("--course", action="store_true",
                    help="timed inspection task: fly to the airlock at the end of Kibo and hold still "
                         "in front of it; the clock starts with the first key press (always on in step 3)")
-    g.add_argument("--team", default="", help="name stored with your results")
     g.add_argument("--truth", action="store_true",
                    help="show the simulator's ground truth in the 3D view (not available in reality)")
 
@@ -86,9 +87,12 @@ def main():
     g.add_argument("--host", default="127.0.0.1")
     a = ap.parse_args()
 
-    sol = {int(s) for s in a.solution.split(",") if s.strip()}
+    try:
+        sol = student.parse_solutions(a.solution)
+    except ValueError as e:
+        ap.error(str(e))
     impl = student.load(a.step, sol, a.all_solutions)
-    lab = Lab(impl, results_dir=ROOT / "results", course=a.course or a.step >= 3, team=a.team,
+    lab = Lab(impl, results_dir=ROOT / "results", course=a.course or a.step >= 3,
               outages=a.outage, show_truth=a.truth, log=lambda *x: print(*x, flush=True))
     lab.set_channel({"delay_ms": a.delay, "jitter_ms": a.jitter, "loss": a.loss / 100.0})
     cam = {}
