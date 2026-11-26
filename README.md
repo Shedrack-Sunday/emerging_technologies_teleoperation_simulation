@@ -65,12 +65,11 @@ itself. `python3 run.py --help` lists all options.
 | Option | Meaning |
 |---|---|
 | `--step N` | exercise step 0..3 |
-| `--solution 1,2` | use the reference solution for these exercises |
+| `--solution 1,2` | use the reference solution for these exercises; with a letter only up to that sub-task, e.g. `--solution 2b` = delay + jitter (files in `solutions/step1/`, `solutions/step2/`) |
 | `--delay MS`, `--jitter MS`, `--loss PCT` | link properties (from step 2 on - before that the link is ideal) |
 | `--outage START:DUR` | link down for DUR seconds, START seconds after your first key press; can be repeated |
 | `--camera WxH`, `--fps F`, `--quality Q`, `--gray` | camera stream (default 800x600, 10 fps, JPEG quality 75) |
 | `--course` | timed inspection task (always on in step 3, see below) |
-| `--team NAME` | name stored with your results |
 | `--truth` | show the simulator's ground truth in the 3D view (not available in reality) |
 
 ## The inspection task (step 3)
@@ -88,7 +87,7 @@ length, idle time, number of waits), which is also saved to `results/runs.csv`.
 |---|---|---|---|
 | W / S | forward / back | Q / E | yaw left / right |
 | A / D | left / right | ↑ / ↓ | look up / down |
-| R / F | up / down | Shift | fine mode |
+| R / F | up / down | | |
 
 ## Repository layout
 
