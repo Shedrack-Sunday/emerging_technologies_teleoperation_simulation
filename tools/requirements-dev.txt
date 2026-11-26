@@ -1,0 +1,5 @@
+pycollada>=0.8
+trimesh>=4.0
+scipy>=1.10
+Pillow>=9.0
+numpy>=1.22

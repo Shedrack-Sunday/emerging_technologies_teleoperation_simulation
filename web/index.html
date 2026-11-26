@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Int-Ball Operator Station</title>
+  <link rel="stylesheet" href="/web/css/style.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "/web/vendor/three/build/three.module.js",
+        "three/addons/": "/web/vendor/three/addons/"
+    } }
+  </script>
+</head>
+<body>
+<main>
+  <section class="panel feed">
+    <div class="panel-title">
+      <span>Main camera <small>· downlink</small></span>
+      <span class="feed-info" id="feed-info">no signal</span>
+    </div>
+    <div class="feed-wrap">
+      <canvas id="feed"></canvas>
+      <div class="feed-overlay">
+        <div class="crosshair"></div>
+        <div class="age" id="feed-age"></div>
+        <div class="nosignal" id="nosignal">NO SIGNAL</div>
+        <div class="banner" id="banner"></div>
+      </div>
+    </div>
+    <div class="telemetry">
+      <div class="tm"><label>position</label><b id="tm-pos">–</b></div>
+      <div class="tm"><label>speed</label><b id="tm-speed">–</b></div>
+      <div class="tm"><label>yaw / pitch</label><b id="tm-att">–</b></div>
+      <div class="tm"><label>battery</label><b id="tm-batt">–</b></div>
+      <div class="tm"><label>collisions</label><b id="tm-coll">–</b></div>
+      <div class="tm"><label>cmd age (robot)</label><b id="tm-cmdage">–</b></div>
+      <div class="ranges" id="ranges"></div>
+    </div>
+  </section>
+
+  <section class="side">
+    <div class="panel map">
+      <div class="panel-title">
+        <span>3D view <small>· from nav/pose</small></span>
+        <span class="toggles">
+          <label><input type="checkbox" id="tg-follow" checked> follow</label>
+        </span>
+      </div>
+      <div class="map-wrap"><canvas id="map"></canvas></div>
+    </div>
+
+    <div class="panel link">
+      <div class="panel-title"><span>Link monitor</span><small>last 2 s</small></div>
+      <table id="link-table">
+        <thead><tr><th>topic</th><th>Hz</th><th>kbit/s</th><th>latency</th><th>loss</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="link-total" id="link-total"></div>
+    </div>
+
+    <div class="panel log">
+      <div class="panel-title"><span>Events &amp; faults</span></div>
+      <div id="errors"></div>
+      <ul id="events"></ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="conn" id="conn"><i></i><span>offline</span></div>
+  <span class="cmd-now" id="cmd-now"></span>
+  <span class="keys-now" id="keys-now"></span>
+</footer>
+
+<script type="module" src="/web/js/main.js"></script>
+</body>
+</html>

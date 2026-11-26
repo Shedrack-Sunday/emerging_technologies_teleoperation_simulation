@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 510" width="1000" height="510"
+     font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1f2328">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444c56"/>
+    </marker>
+  </defs>
+  <style>
+    .ln { stroke: #444c56; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .dash { stroke-dasharray: 5 4; }
+    .lbl { font-size: 11px; fill: #57606a; }
+    .hd { font-weight: bold; font-size: 15px; }
+    .col { font-weight: bold; font-size: 12px; fill: #57606a; letter-spacing: .04em; }
+    .b { font-weight: bold; }
+    .tag { font-weight: bold; font-size: 10px; fill: #b0700a; letter-spacing: .05em; }
+    .sm { font-size: 11px; fill: #57606a; }
+  </style>
+
+  <rect width="1000" height="510" fill="#ffffff"/>
+
+  <!-- legend -->
+  <rect x="740" y="10" width="22" height="14" rx="3" fill="#fff1d6" stroke="#e0a030"/>
+  <text x="770" y="22" class="sm">your code (exercises/)</text>
+  <line x1="880" y1="17" x2="915" y2="17" class="ln dash"/>
+  <text x="922" y="22" class="sm">camera path</text>
+
+  <!-- ============ Browser ============ -->
+  <rect x="20" y="40" width="210" height="350" rx="10" fill="#eaf2fc" stroke="#4a7fc1" stroke-width="1.5"/>
+  <text x="125" y="64" text-anchor="middle" class="hd">Browser</text>
+  <text x="125" y="81" text-anchor="middle" class="sm">operator station</text>
+
+  <rect x="40" y="100" width="170" height="60" rx="6" fill="#fff" stroke="#4a7fc1"/>
+  <text x="125" y="126" text-anchor="middle" class="b">Keyboard</text>
+  <text x="125" y="143" text-anchor="middle" class="sm">keys currently held</text>
+
+  <rect x="40" y="285" width="170" height="90" rx="6" fill="#fff" stroke="#4a7fc1"/>
+  <text x="125" y="308" text-anchor="middle" class="b">Display</text>
+  <text x="125" y="326" text-anchor="middle" class="sm">camera feed, telemetry,</text>
+  <text x="125" y="341" text-anchor="middle" class="sm">3D view, link monitor,</text>
+  <text x="125" y="356" text-anchor="middle" class="sm">events &amp; faults</text>
+
+  <!-- ============ Python ============ -->
+  <rect x="270" y="40" width="710" height="350" rx="10" fill="#eef6ec" stroke="#5a9a52" stroke-width="1.5"/>
+  <text x="625" y="64" text-anchor="middle" class="hd">Python  <tspan class="sm" font-weight="normal">python run.py · simulation clock 100 Hz</tspan></text>
+
+  <text x="385" y="90" text-anchor="middle" class="col">OPERATOR SIDE</text>
+  <text x="610" y="90" text-anchor="middle" class="col">SIMULATED LINK</text>
+  <rect x="740" y="74" width="225" height="306" rx="8" fill="#ffffff" fill-opacity=".55" stroke="#5a9a52" stroke-dasharray="4 3"/>
+  <text x="852" y="90" text-anchor="middle" class="col">INT-BALL (ROBOT SIDE)</text>
+
+  <!-- operator side -->
+  <rect x="300" y="100" width="170" height="60" rx="6" fill="#fff1d6" stroke="#e0a030"/>
+  <text x="462" y="113" text-anchor="end" class="tag">STEP 1</text>
+  <text x="385" y="131" text-anchor="middle" class="b">keys_to_command()</text>
+  <text x="385" y="148" text-anchor="middle" class="sm">keys → velocity command</text>
+
+  <rect x="300" y="300" width="170" height="60" rx="6" fill="#fff" stroke="#5a9a52"/>
+  <text x="385" y="326" text-anchor="middle" class="b">receive</text>
+  <text x="385" y="343" text-anchor="middle" class="sm">drop outdated messages</text>
+
+  <!-- link -->
+  <rect x="520" y="100" width="180" height="60" rx="6" fill="#fff1d6" stroke="#e0a030"/>
+  <text x="692" y="113" text-anchor="end" class="tag">STEP 2</text>
+  <text x="610" y="131" text-anchor="middle" class="b">uplink channel</text>
+  <text x="610" y="148" text-anchor="middle" class="sm">delay · jitter · loss</text>
+
+  <rect x="520" y="300" width="180" height="60" rx="6" fill="#fff1d6" stroke="#e0a030"/>
+  <text x="692" y="313" text-anchor="end" class="tag">STEP 2</text>
+  <text x="610" y="331" text-anchor="middle" class="b">downlink channel</text>
+  <text x="610" y="348" text-anchor="middle" class="sm">delay · jitter · loss</text>
+
+  <!-- robot side -->
+  <rect x="750" y="110" width="205" height="40" rx="6" fill="#fff1d6" stroke="#e0a030"/>
+  <text x="947" y="122" text-anchor="end" class="tag">STEP 2d</text>
+  <text x="760" y="135" class="b">watchdog</text>
+
+  <rect x="750" y="165" width="205" height="40" rx="6" fill="#fff" stroke="#5a9a52"/>
+  <text x="852" y="190" text-anchor="middle">velocity controller → fans</text>
+
+  <rect x="750" y="220" width="205" height="40" rx="6" fill="#fff" stroke="#5a9a52"/>
+  <text x="852" y="245" text-anchor="middle">physics + Kibo collisions</text>
+
+  <rect x="750" y="275" width="205" height="45" rx="6" fill="#fff" stroke="#5a9a52"/>
+  <text x="852" y="294" text-anchor="middle" class="b">sensors</text>
+  <text x="852" y="311" text-anchor="middle" class="sm">nav/pose · imu · range · status · events</text>
+
+  <rect x="750" y="330" width="205" height="40" rx="6" fill="#fff" stroke="#5a9a52"/>
+  <text x="852" y="349" text-anchor="middle" class="b">camera</text>
+  <text x="852" y="363" text-anchor="middle" class="sm">JPEG encoding</text>
+
+  <!-- ============ camera renderer (browser) ============ -->
+  <rect x="740" y="430" width="225" height="62" rx="8" fill="#eaf2fc" stroke="#4a7fc1" stroke-width="1.5"/>
+  <text x="852" y="452" text-anchor="middle" class="b">camera renderer (three.js)</text>
+  <text x="852" y="468" text-anchor="middle" class="sm">runs in the browser tab (GPU), draws</text>
+  <text x="852" y="482" text-anchor="middle" class="sm">Kibo from the robot's TRUE pose</text>
+
+  <!-- ============ arrows: command path ============ -->
+  <line x1="210" y1="130" x2="298" y2="130" class="ln"/>
+  <text x="254" y="122" text-anchor="middle" class="lbl">keys</text>
+  <line x1="470" y1="130" x2="518" y2="130" class="ln"/>
+  <line x1="700" y1="130" x2="748" y2="130" class="ln"/>
+  <text x="610" y="185" text-anchor="middle" class="lbl">cmd/velocity, 20 Hz</text>
+  <line x1="852" y1="150" x2="852" y2="163" class="ln"/>
+  <line x1="852" y1="205" x2="852" y2="218" class="ln"/>
+  <line x1="852" y1="260" x2="852" y2="273" class="ln"/>
+
+  <!-- ============ arrows: sensor path ============ -->
+  <line x1="750" y1="297" x2="702" y2="320" class="ln"/>
+  <line x1="750" y1="350" x2="702" y2="340" class="ln"/>
+  <text x="610" y="285" text-anchor="middle" class="lbl">camera/image, nav/pose, imu, …</text>
+  <line x1="520" y1="330" x2="472" y2="330" class="ln"/>
+  <line x1="300" y1="330" x2="212" y2="330" class="ln"/>
+  <text x="256" y="322" text-anchor="middle" class="lbl">data</text>
+
+  <!-- ============ camera render loop ============ -->
+  <line x1="815" y1="370" x2="815" y2="428" class="ln dash"/>
+  <text x="808" y="404" text-anchor="end" class="lbl">render request</text>
+  <text x="808" y="417" text-anchor="end" class="lbl">(true pose)</text>
+  <line x1="890" y1="430" x2="890" y2="372" class="ln dash"/>
+  <text x="897" y="404" class="lbl">raw pixels</text>
+
+  <!-- websocket note -->
+  <text x="250" y="420" text-anchor="middle" class="sm">Browser ⇄ Python: one WebSocket on localhost:8080</text>
+  <text x="250" y="436" text-anchor="middle" class="sm">(the browser never talks to the robot directly -</text>
+  <text x="250" y="452" text-anchor="middle" class="sm">everything passes through the simulated link)</text>
+</svg>
