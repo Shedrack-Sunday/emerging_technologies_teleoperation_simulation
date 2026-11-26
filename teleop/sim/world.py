@@ -71,6 +71,7 @@ class Target:
     pitch_tol: float = np.radians(20)
     max_speed: float = 0.03
     hold_s: float = 2.0
+    description: str = ""
 
     def contains(self, pos, yaw, pitch, speed) -> bool:
         dyaw = (yaw - self.yaw + np.pi) % (2 * np.pi) - np.pi
@@ -209,8 +210,10 @@ def make_kibo_real(sdf: DistanceField) -> World:
         _box("CTB-2", "bag", [5.0, 0.55, 0.5], [5.55, L, L]),
         _box("CTB-3", "bag", [6.6, -L, 0.4], [7.0, -0.6, L]),
     ]
-    # JEM airlock hatch in the end cone (its face is at x ~ 8.0 m): inspect from 0.5..1 m
-    w.target = Target("JEM airlock", np.array([7.0, -0.3, -0.3]), np.array([7.5, 0.3, 0.3]))
+    # Above the JEM airlock: the slot between the airlock (top at z ~ 0.3 m, face at
+    # x ~ 8.0 m) and the ceiling (z ~ 0.95 m). Clearance in the box >= 0.20 m.
+    w.target = Target("JEM airlock", np.array([8.2, -0.3, 0.55]), np.array([8.8, 0.3, 0.75]),
+                      description="fly into the gap above the JEM airlock at the far end of Kibo")
     return w
 
 
@@ -234,5 +237,6 @@ def make_kibo_boxes() -> World:
         obs.append(_box(f"rail-floor-{i}", "rail", [x, -0.3, -H], [x + 0.6, -0.25, -H + 0.07]))
         obs.append(_box(f"rail-ceil-{i}", "rail", [x + 0.9, 0.25, H - 0.07], [x + 1.5, 0.3, H]))
     w.obstacles = obs
-    w.target = Target("end wall", np.array([9.0, -0.3, -0.3]), np.array([9.8, 0.3, 0.3]))
+    w.target = Target("end wall", np.array([9.0, -0.3, -0.3]), np.array([9.8, 0.3, 0.3]),
+                      description="fly to the end wall of Kibo")
     return w

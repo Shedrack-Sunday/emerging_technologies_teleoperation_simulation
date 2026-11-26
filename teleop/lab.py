@@ -276,7 +276,7 @@ class Lab:
         settled = self.robot.in_target_since is not None
         if settled != r.settled:
             r.settled = settled
-            self.log(f"  {self.now - r.t0:6.1f} s  " + (f"at the {self.world.target.name} - hold still..." if settled
+            self.log(f"  {self.now - r.t0:6.1f} s  " + (f"in position above the {self.world.target.name} - hold still..." if settled
                                                        else "left the inspection position"))
         if moving:
             if r._idle_run > 0.5:

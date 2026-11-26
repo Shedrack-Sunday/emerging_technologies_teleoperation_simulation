@@ -204,8 +204,8 @@ def serve(lab: Lab, host: str, port: int):
           + (", gray" if cam.grayscale else ""))
     if lab.course:
         t = lab.world.target
-        print(f"  timed task: fly to the {t.name} at the far end of Kibo,")
-        print(f"  stop {t.lo[0]:g}-{t.hi[0]:g} m along the module, facing it, and hold still for {t.hold_s:g} s.")
+        print(f"  timed task: {t.description},")
+        print(f"  face the end wall and hold still there for {t.hold_s:g} s.")
         print("  The clock starts with your first key press.")
     print(f"\n  operator station: {url}   (Ctrl+C to stop)\n")
     web.run_app(app, host=host, port=port, print=None)
