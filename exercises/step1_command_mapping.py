@@ -34,14 +34,10 @@ MAX_RATE = 0.5      # rad/s
 def keys_to_command(keys):
     vx, vy, vz = 0.0, 0.0, 0.0      # m/s
     wy, wz = 0.0, 0.0               # rad/s
-
-   import math
-
-from teleop.commands import VelocityCommand
+   
 
 MAX_SPEED = 0.25    # m/s
 MAX_RATE = 0.5      # rad/s
-
 
 def keys_to_command(keys):
     vx, vy, vz = 0.0, 0.0, 0.0
